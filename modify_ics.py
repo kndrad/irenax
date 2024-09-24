@@ -17,7 +17,7 @@ def load_config(path):
 
 def setup_argparse():
     parser = argparse.ArgumentParser(
-        description="Modify duties ics file by adding description for each."
+        description="Adds full description and location to each duty."
     )
     parser.add_argument(
         "--config",
