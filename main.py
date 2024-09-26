@@ -117,8 +117,13 @@ def main():
             alarm_before.add("description", "Reminder: duty tommorow.")
             event.add_component(alarm_before)
 
+            # TODO: Add crew info.
+
+
             # Add location read from config.
             event["LOCATION"] = location.strip()
+
+
 
     session.close()
 

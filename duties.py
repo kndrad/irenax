@@ -80,13 +80,11 @@ class Duty:
 _rows_re = re.compile("^(duty-components).*")
 _urlid_re = re.compile(r"(id=)(?P<id>\d+)")
 
-_undefined = "UNDEFINED"
 _DATE_FORMAT = "%Y-%m-%d"
-
 
 def search(session, title, date) -> Duty:
     if is_training(title):
-        return Duty(_undefined, title, [])
+        return Duty(title, title, [])
 
     date_only = date.strftime(_DATE_FORMAT)
     url = (
