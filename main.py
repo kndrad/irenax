@@ -1,12 +1,10 @@
-from icalendar import Calendar, Event, vText, Alarm
+from icalendar import Calendar, Alarm
 import argparse
 import yaml
 import os
 from auth import start_session
 import duties
-import yaml
 import datetime
-import copy
 
 
 def load_config(path):
@@ -39,6 +37,9 @@ def setup_argparse():
         "-loc",
         default="al. Wojciecha Korfantego 2 Katowice, Polska",
         help="Location in format [Street City, Country]",
+    )
+    parser.add_argument(
+        "--timezone", "-tz", default="Europe/Warsaw", help="Local timezone."
     )
     return parser
 
@@ -74,6 +75,14 @@ def main():
     if not location:
         parser.error("Location for duty events is required")
 
+    local_tz = args.timezone
+    if not local_tz:
+        local_tz = config.get("timezone")
+    if not local_tz:
+        parser.error(
+            "Timezone is required. Please provide them via --timezone, -tz flag or within a config file."
+        )
+
     try:
         with open(in_path, "rb") as f:  # Open in binary mode
             cal = Calendar.from_ical(f.read())
@@ -105,7 +114,7 @@ def main():
 
             # Add description.
             description = duty.event_description()
-            night_hours = duties.calculate_night_hours(start, end)
+            night_hours = duties.calculate_night_hours(local_tz, start, end)
             description += "\n" + f"Night hours: '{night_hours:.2f}'"
             print(f"FINAL DESCRIPTION: {description}")
             event["DESCRIPTION"] = description

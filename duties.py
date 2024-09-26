@@ -3,8 +3,12 @@ from bs4 import BeautifulSoup
 from bs4.element import SoupStrainer
 from dataclasses import dataclass
 from typing import List
-from datetime import datetime, timedelta
+from datetime import timedelta
 
+_rows_re = re.compile("^(duty-components).*")
+_urlid_re = re.compile(r"(id=)(?P<id>\d+)")
+
+_DATE_FORMAT = "%Y-%m-%d"
 
 def is_work(title):
     # pattern = r"^[A-Za-z]+\d+\*?$"
@@ -21,11 +25,11 @@ def is_training(title):
     return title == "VS"
 
 
-def calculate_night_hours(start, end):
+def calculate_night_hours(tz, start, end):
     if start.tzinfo is None:
-        start = start.replace(tzinfo=tz.tzutc()).astimezone(local_tz)
+        start = start.replace(tzinfo=tz.tzutc()).astimezone(tz)
     if end.tzinfo is None:
-        end = end.replace(tzinfo=tz.tzutc()).astimezone(local_tz)
+        end = end.replace(tzinfo=tz.tzutc()).astimezone(tz)
 
     night_start = start.replace(hour=22, minute=0, second=0, microsecond=0)
     night_end = (start + timedelta(days=1)).replace(
@@ -77,10 +81,6 @@ class Duty:
         return description
 
 
-_rows_re = re.compile("^(duty-components).*")
-_urlid_re = re.compile(r"(id=)(?P<id>\d+)")
-
-_DATE_FORMAT = "%Y-%m-%d"
 
 def search(session, title, date) -> Duty:
     if is_training(title):
