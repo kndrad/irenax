@@ -84,7 +84,7 @@ _undefined = "UNDEFINED"
 _DATE_FORMAT = "%Y-%m-%d"
 
 
-def get_duty(session, title, date) -> Duty:
+def search(session, title, date) -> Duty:
     if is_training(title):
         return Duty(_undefined, title, [])
 

@@ -4,7 +4,6 @@ import yaml
 import os
 from auth import start_session
 import duties
-from config import load_config
 import yaml
 import datetime
 import copy
@@ -26,8 +25,8 @@ def setup_argparse():
         default=f"{os.environ['HOME']}/.irena.yaml",
         help="Path to YAML config file",
     )
-    parser.add_argument("--username", help="Username for authentication")
-    parser.add_argument("--password", help="Password for authentication")
+    parser.add_argument("--username", "-u", help="Username for authentication")
+    parser.add_argument("--password", "-pswd", help="Password for authentication")
     parser.add_argument("--input", "-i", help="Path of duties ics file to modify")
     parser.add_argument(
         "--output",
@@ -102,7 +101,7 @@ def main():
             end = event.get("DTEND").dt
 
             # Get duty.
-            duty = duties.get_duty(session, title, start)
+            duty = duties.search(session, title, start)
 
             # Add description.
             description = duty.event_description()
